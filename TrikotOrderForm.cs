@@ -34,6 +34,12 @@ namespace SVU_Bestellungen
             this.BackColor = System.Drawing.Color.White;
             this.ForeColor = System.Drawing.Color.DarkRed;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.Load += TrikotOrderForm_Load;  // Registering the Load event
+        }
+
+        private void TrikotOrderForm_Load(object sender, EventArgs e)
+        {
+            txtNachname.Focus();
         }
 
         private void LoadOrdersFromCSV()
@@ -46,13 +52,14 @@ namespace SVU_Bestellungen
                     while ((line = sr.ReadLine()) != null)
                     {
                         string[] values = line.Split(',');
-                        if (values.Length == 4) // Ensure that there are 4 columns in the CSV
+                        if (values.Length == 5)
                         {
                             DataRow row = ordersTable.NewRow();
-                            row["Artikel"] = values[0];
-                            row["Größe"] = values[1];
-                            row["Farbe"] = values[2];
-                            row["Menge"] = values[3];
+                            row["Nachname"] = values[0];
+                            row["Vorname"] = values[1];
+                            row["Größe"] = values[2];
+                            row["Initialen"] = values[3];
+                            row["Menge"] = int.Parse(values[4]); // Add this line
                             ordersTable.Rows.Add(row);
                         }
                     }
@@ -64,19 +71,17 @@ namespace SVU_Bestellungen
         private void InitializeOrdersTable()
         {
             ordersTable = new DataTable();
-            ordersTable.Columns.Add("Artikel");
-            ordersTable.Columns.Add("Größe");
-            ordersTable.Columns.Add("Farbe");
-            ordersTable.Columns.Add("Menge");
+            ordersTable.Columns.Add("Nachname");
+            ordersTable.Columns.Add("Vorname");
+            ordersTable.Columns.Add("Größe");  // Adding the Größe column
+            ordersTable.Columns.Add("Initialen");
+            ordersTable.Columns.Add("Menge", typeof(int));
 
             dataGridViewOrders.DataSource = ordersTable;
         }
 
         private void InitializeControls()
         {
-            comboBoxArticle.Items.Add("Trikot");
-            comboBoxArticle.Items.Add("Polo");
-
             comboBoxSize.Items.Add("S");
             comboBoxSize.Items.Add("M");
             comboBoxSize.Items.Add("L");
@@ -147,12 +152,21 @@ namespace SVU_Bestellungen
         private void BtnAddOrder_Click(object sender, EventArgs e)
         {
             DataRow row = ordersTable.NewRow();
-            row["Artikel"] = comboBoxArticle.SelectedItem?.ToString() ?? string.Empty;
-            row["Größe"] = comboBoxSize.SelectedItem?.ToString() ?? string.Empty;
-            row["Farbe"] = txtColor.Text;
-            row["Menge"] = numericUpDownQuantity.Value.ToString();
+            row["Nachname"] = txtNachname.Text;
+            row["Vorname"] = txtVorname.Text;
+            row["Initialen"] = txtInitialen.Text;
+            row["Größe"] = comboBoxSize.SelectedItem.ToString();
+            row["Menge"] = numericUpDownQuantity.Value;
             ordersTable.Rows.Add(row);
+
+            // Clear the input controls
+            txtNachname.Clear();
+            txtVorname.Clear();
+            txtInitialen.Clear();
+            comboBoxSize.SelectedIndex = -1; // deselect any selected item
+            numericUpDownQuantity.Value = numericUpDownQuantity.Minimum; // or set it to some default value if you have
         }
+
 
         private void BtnSaveOrders_Click(object sender, EventArgs e)
         {
@@ -160,33 +174,30 @@ namespace SVU_Bestellungen
             {
                 foreach (DataRow row in ordersTable.Rows)
                 {
-                    sw.WriteLine(string.Join(",", row.ItemArray));
+                    sw.WriteLine($"{row["Nachname"]},{row["Vorname"]},{row["Größe"]},{row["Initialen"]},{row["Menge"]}");
                 }
+
             }
             MessageBox.Show("Bestellungen gespeichert!");
         }
 
         private void EvaluateOrderQuantities()
         {
-            // Key: Artikel|Größe|Farbe, Value: Gesamtmenge
+            // Key: Größe, Value: Gesamtmenge
             Dictionary<string, int> summary = new Dictionary<string, int>();
 
             foreach (DataRow row in ordersTable.Rows)
             {
-                string article = row["Artikel"].ToString();
                 string size = row["Größe"].ToString();
-                string color = row["Farbe"].ToString();
                 int quantity = int.Parse(row["Menge"].ToString());
 
-                string key = $"{article}|{size}|{color}";
-
-                if (summary.ContainsKey(key))
+                if (summary.ContainsKey(size))
                 {
-                    summary[key] += quantity;
+                    summary[size] += quantity;
                 }
                 else
                 {
-                    summary[key] = quantity;
+                    summary[size] = quantity;
                 }
             }
 
@@ -194,12 +205,11 @@ namespace SVU_Bestellungen
             using (StreamWriter sw = new StreamWriter("bestellzusammenfassung.csv", false, Encoding.UTF8))
             {
                 // Header
-                sw.WriteLine("Artikel,Größe,Farbe,Menge");
+                sw.WriteLine("Größe,Menge");
 
                 foreach (var entry in summary)
                 {
-                    string[] parts = entry.Key.Split('|');
-                    sw.WriteLine($"{parts[0]},{parts[1]},{parts[2]},{entry.Value}");
+                    sw.WriteLine($"{entry.Key},{entry.Value}");
                 }
             }
 
@@ -207,12 +217,13 @@ namespace SVU_Bestellungen
             StringBuilder orderSummary = new StringBuilder("Bestellzusammenfassung:\n\n");
             foreach (var entry in summary)
             {
-                orderSummary.AppendLine($"{entry.Key.Replace("|", " - ")}: {entry.Value} Stück");
+                orderSummary.AppendLine($"Größe {entry.Key}: {entry.Value} Stück");
             }
 
             MessageBox.Show(orderSummary.ToString());
             MessageBox.Show("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
         }
+
 
         private void btnOpenFolder_Click(object sender, EventArgs e)
         {

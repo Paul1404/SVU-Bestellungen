@@ -7,6 +7,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Data.SQLite;
+
 
 
 namespace SVU_Bestellungen
@@ -20,7 +22,8 @@ namespace SVU_Bestellungen
             InitializeComponent();
             InitializeOrdersTable();
             InitializeControls();
-            LoadOrdersFromCSV();
+            InitializeDatabase();
+            LoadOrdersFromDatabase();
             btnSaveSummary.Click += (s, e) => EvaluateOrderQuantities();
             this.AcceptButton = btnAddOrder;
             // this.BackgroundImage = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("SVU_Bestellungen.background.jpg"));
@@ -40,32 +43,83 @@ namespace SVU_Bestellungen
         private void TrikotOrderForm_Load(object sender, EventArgs e)
         {
             txtNachname.Focus();
+            string currentUserName = Environment.UserName;
+            LogMessage($"Willkommen, {currentUserName}!");
+            numericUpDownQuantity.Value = 1;
         }
 
-        private void LoadOrdersFromCSV()
+        private void LogMessage(string message)
         {
-            if (File.Exists("bestellungen.csv"))
+            // Erstellen des Zeitstempels
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            // Füge den Zeitstempel und die Meldung zur richInfoTextBox hinzu
+            richInfoTextBox.AppendText($"[{timestamp}] {message}\n");
+
+            // Automatisches Scrollen zum Ende der RichTextBox, damit die neueste Nachricht sichtbar ist
+            richInfoTextBox.ScrollToCaret();
+        }
+
+        private void ShowErrorMessage(string error)
+        {
+            // Titel und Symbol der MessageBox anpassen
+            MessageBox.Show(error, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+
+        private void InitializeDatabase()
+        {
+            string databasePath = "Bestellungen.db";
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection($"Data Source={databasePath};Version=3;"))
             {
-                using (StreamReader sr = new StreamReader("bestellungen.csv", Encoding.UTF8))
+                m_dbConnection.Open();
+
+                // Prüfen, ob die Tabelle bereits existiert. Wenn nicht, dann erstellen.
+                string createTableSql = @"CREATE TABLE IF NOT EXISTS orders (
+                                    ID INTEGER PRIMARY KEY,
+                                    Nachname TEXT,
+                                    Vorname TEXT,
+                                    Initialen TEXT,
+                                    Größe TEXT,
+                                    Menge INTEGER)";
+                using (SQLiteCommand command = new SQLiteCommand(createTableSql, m_dbConnection))
                 {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
+                    command.ExecuteNonQuery();
+                }
+
+                // Eindeutigen Index erstellen
+                string createIndexSql = "CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_order ON orders (Nachname, Vorname, Größe, Initialen)";
+                using (SQLiteCommand command = new SQLiteCommand(createIndexSql, m_dbConnection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        private void LoadOrdersFromDatabase()
+        {
+            string databasePath = "Bestellungen.db";
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection($"Data Source={databasePath};Version=3;"))
+            {
+                m_dbConnection.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM orders", m_dbConnection))
+                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
                     {
-                        string[] values = line.Split(',');
-                        if (values.Length == 5)
-                        {
-                            DataRow row = ordersTable.NewRow();
-                            row["Nachname"] = values[0];
-                            row["Vorname"] = values[1];
-                            row["Größe"] = values[2];
-                            row["Initialen"] = values[3];
-                            row["Menge"] = int.Parse(values[4]); // Add this line
-                            ordersTable.Rows.Add(row);
-                        }
+                        DataRow row = ordersTable.NewRow();
+                        row["Nachname"] = reader["Nachname"];
+                        row["Vorname"] = reader["Vorname"];
+                        row["Größe"] = reader["Größe"];
+                        row["Initialen"] = reader["Initialen"];
+                        row["Menge"] = int.Parse(reader["Menge"].ToString());
+                        ordersTable.Rows.Add(row);
                     }
                 }
             }
         }
+
 
 
         private void InitializeOrdersTable()
@@ -170,16 +224,66 @@ namespace SVU_Bestellungen
 
         private void BtnSaveOrders_Click(object sender, EventArgs e)
         {
-            using (StreamWriter sw = new StreamWriter("bestellungen.csv", false, Encoding.UTF8))
+            try
             {
-                foreach (DataRow row in ordersTable.Rows)
+                string databasePath = "Bestellungen.db";
+                using (SQLiteConnection m_dbConnection = new SQLiteConnection($"Data Source={databasePath};Version=3;"))
                 {
-                    sw.WriteLine($"{row["Nachname"]},{row["Vorname"]},{row["Größe"]},{row["Initialen"]},{row["Menge"]}");
-                }
+                    m_dbConnection.Open();
 
+                    // Beginnen Sie die Transaktion
+                    using (SQLiteTransaction transaction = m_dbConnection.BeginTransaction())
+                    {
+                        try
+                        {
+                            LogMessage("Überprüfung des Inhalts von ordersTable vor dem Einfügen:");
+                            foreach (DataRow row in ordersTable.Rows)
+                            {
+                                LogMessage($"Nachname: {row["Nachname"]}, Vorname: {row["Vorname"]}, Größe: {row["Größe"]}, Initialen: {row["Initialen"]}, Menge: {row["Menge"]}");
+                            }
+
+                            foreach (DataRow row in ordersTable.Rows)
+                            {
+                                string insertSQL = $"INSERT INTO orders (Nachname, Vorname, Größe, Initialen, Menge) VALUES (@Nachname, @Vorname, @Größe, @Initialen, @Menge)";
+                                using (SQLiteCommand cmd = new SQLiteCommand(insertSQL, m_dbConnection))
+                                {
+                                    cmd.Parameters.AddWithValue("@Nachname", row["Nachname"].ToString());
+                                    cmd.Parameters.AddWithValue("@Vorname", row["Vorname"].ToString());
+                                    cmd.Parameters.AddWithValue("@Größe", row["Größe"].ToString());
+                                    cmd.Parameters.AddWithValue("@Initialen", row["Initialen"].ToString());
+                                    cmd.Parameters.AddWithValue("@Menge", row["Menge"].ToString());
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            // Transaktion abschließen
+                            transaction.Commit();
+                        }
+                        catch
+                        {
+                            // Bei einem Fehler wird die Transaktion zurückgesetzt
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
             }
-            MessageBox.Show("Bestellungen gespeichert!");
+            catch (SQLiteException ex)
+            {
+                // Überprüfen Sie, ob es sich um einen Konflikt wegen eines eindeutigen Indexes handelt
+                if (ex.ResultCode == SQLiteErrorCode.Constraint)
+                {
+                    LogMessage("Ein oder mehrere Einträge sind bereits in der Datenbank vorhanden und wurden nicht erneut hinzugefügt.");
+                }
+                else
+                {
+                    ShowErrorMessage($"Ein Fehler ist aufgetreten: {ex.Message}");
+                }
+            }
+
+            LogMessage("Bestellungen gespeichert!");
         }
+
 
         private void EvaluateOrderQuantities()
         {
@@ -220,8 +324,8 @@ namespace SVU_Bestellungen
                 orderSummary.AppendLine($"Größe {entry.Key}: {entry.Value} Stück");
             }
 
-            MessageBox.Show(orderSummary.ToString());
-            MessageBox.Show("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
+            LogMessage(orderSummary.ToString());
+            LogMessage("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
         }
 
 
@@ -242,13 +346,13 @@ namespace SVU_Bestellungen
                 }
                 else
                 {
-                    MessageBox.Show("Konnte den Ordner nicht finden.");
+                    LogMessage("Konnte den Ordner nicht finden.");
                 }
             }
             catch (Exception ex)
             {
                 // Display a user-friendly message
-                MessageBox.Show($"Ein Fehler ist aufgetreten: {ex.Message}");
+                ShowErrorMessage($"Ein Fehler ist aufgetreten: {ex.Message}");
             }
         }
 

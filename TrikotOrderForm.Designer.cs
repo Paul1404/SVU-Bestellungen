@@ -84,7 +84,7 @@
             // 
             // txtColor
             // 
-            this.txtColor.Location = new System.Drawing.Point(478, 58);
+            this.txtColor.Location = new System.Drawing.Point(478, 56);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(227, 26);
             this.txtColor.TabIndex = 4;
@@ -101,7 +101,7 @@
             // numericUpDownQuantity
             // 
             this.numericUpDownQuantity.Cursor = System.Windows.Forms.Cursors.SizeNS;
-            this.numericUpDownQuantity.Location = new System.Drawing.Point(711, 58);
+            this.numericUpDownQuantity.Location = new System.Drawing.Point(711, 56);
             this.numericUpDownQuantity.Name = "numericUpDownQuantity";
             this.numericUpDownQuantity.Size = new System.Drawing.Size(120, 26);
             this.numericUpDownQuantity.TabIndex = 6;

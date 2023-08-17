@@ -103,7 +103,6 @@ namespace SVU_Bestellungen
                 {
                     var comboBox = ctrl as ComboBox;
                     comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-                    comboBox.FlatStyle = FlatStyle.Flat;
                 }
                 else if (ctrl is DataGridView)
                 {
@@ -121,7 +120,6 @@ namespace SVU_Bestellungen
                 else if (ctrl is TextBox)
                 {
                     var txt = ctrl as TextBox;
-                    txt.BorderStyle = BorderStyle.FixedSingle;
                 }
             }
 

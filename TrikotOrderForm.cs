@@ -16,6 +16,9 @@ namespace SVU_Bestellungen
     public partial class TrikotOrderForm : Form
     {
         private DataTable ordersTable;
+        private string connectionString;
+        private SQLiteDataAdapter dataAdapter;
+        private DataTable dataTable;
 
         public TrikotOrderForm()
         {
@@ -23,7 +26,7 @@ namespace SVU_Bestellungen
             InitializeOrdersTable();
             InitializeControls();
             InitializeDatabase();
-            LoadOrdersFromDatabase();
+            //LoadOrdersFromDatabase();
             btnSaveSummary.Click += (s, e) => EvaluateOrderQuantities();
             this.AcceptButton = btnAddOrder;
             // this.BackgroundImage = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("SVU_Bestellungen.background.jpg"));
@@ -43,9 +46,31 @@ namespace SVU_Bestellungen
         private void TrikotOrderForm_Load(object sender, EventArgs e)
         {
             txtNachname.Focus();
+            connectionString = $"Data Source=Bestellungen.db;Version=3;";
             string currentUserName = Environment.UserName;
             LogMessage($"Willkommen, {currentUserName}!");
             numericUpDownQuantity.Value = 1;
+
+            // Find the index of the "ID" column
+            int idColumnIndex = dataGridViewOrders.Columns["ID"].Index;
+
+            // Move the "ID" column to the beginning
+            dataGridViewOrders.Columns["ID"].DisplayIndex = 0;
+
+            // Adjust the display index of the other columns
+            foreach (DataGridViewColumn column in dataGridViewOrders.Columns)
+            {
+                if (column.Name != "ID")
+                {
+                    if (column.DisplayIndex <= idColumnIndex)
+                    {
+                        column.DisplayIndex += 1;
+                    }
+                }
+            }
+
+
+
         }
 
         private void LogMessage(string message)
@@ -70,24 +95,35 @@ namespace SVU_Bestellungen
         private void InitializeDatabase()
         {
             string databasePath = "Bestellungen.db";
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection($"Data Source={databasePath};Version=3;"))
+            string connectionString = $"Data Source={databasePath};Version=3;";
+
+            // Ensure database structures are in place
+            SetupDatabase(connectionString);
+
+            // Load data and bind to DataGridView
+            BindDataToDataGridView(connectionString);
+        }
+
+        private void SetupDatabase(string connectionString)
+        {
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(connectionString))
             {
                 m_dbConnection.Open();
 
-                // Prüfen, ob die Tabelle bereits existiert. Wenn nicht, dann erstellen.
+                // Create table if it doesn't exist
                 string createTableSql = @"CREATE TABLE IF NOT EXISTS orders (
-                                    ID INTEGER PRIMARY KEY,
-                                    Nachname TEXT,
-                                    Vorname TEXT,
-                                    Initialen TEXT,
-                                    Größe TEXT,
-                                    Menge INTEGER)";
+                        ID INTEGER PRIMARY KEY,
+                        Nachname TEXT,
+                        Vorname TEXT,
+                        Initialen TEXT,
+                        Größe TEXT,
+                        Menge INTEGER)";
                 using (SQLiteCommand command = new SQLiteCommand(createTableSql, m_dbConnection))
                 {
                     command.ExecuteNonQuery();
                 }
 
-                // Eindeutigen Index erstellen
+                // Create unique index
                 string createIndexSql = "CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_order ON orders (Nachname, Vorname, Größe, Initialen)";
                 using (SQLiteCommand command = new SQLiteCommand(createIndexSql, m_dbConnection))
                 {
@@ -95,6 +131,40 @@ namespace SVU_Bestellungen
                 }
             }
         }
+
+        private void SyncDataBase(object sender, EventArgs e)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                // Änderungen zurück in die Datenbank schreiben
+                new SQLiteCommandBuilder(dataAdapter);
+                dataAdapter.Update(dataTable);
+            }
+
+        }
+
+        private void BindDataToDataGridView(string connectionString)
+        {
+            SQLiteDataAdapter dataAdapter;
+            DataTable dataTable = new DataTable();
+
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                // Load data from database into DataTable
+                dataAdapter = new SQLiteDataAdapter("SELECT * FROM orders", connection);
+                dataAdapter.Fill(dataTable);
+
+                // Bind DataTable to DataGridView
+                dataGridViewOrders.DataSource = dataTable;
+            }
+        }
+
+
+
 
 
         private void LoadOrdersFromDatabase()
@@ -132,7 +202,14 @@ namespace SVU_Bestellungen
             ordersTable.Columns.Add("Menge", typeof(int));
 
             dataGridViewOrders.DataSource = ordersTable;
+
+            // Konfigurieren Sie die Darstellung der Status-Spalte im DataGridView
+            if (dataGridViewOrders.Columns["Status"] is DataGridViewCheckBoxColumn statusCol)
+            {
+                statusCol.HeaderText = "Gespeichert";
+            }
         }
+
 
         private void InitializeControls()
         {
@@ -221,7 +298,6 @@ namespace SVU_Bestellungen
             numericUpDownQuantity.Value = numericUpDownQuantity.Minimum; // or set it to some default value if you have
         }
 
-
         private void BtnSaveOrders_Click(object sender, EventArgs e)
         {
             try
@@ -236,14 +312,9 @@ namespace SVU_Bestellungen
                     {
                         try
                         {
-                            LogMessage("Überprüfung des Inhalts von ordersTable vor dem Einfügen:");
                             foreach (DataRow row in ordersTable.Rows)
                             {
-                                LogMessage($"Nachname: {row["Nachname"]}, Vorname: {row["Vorname"]}, Größe: {row["Größe"]}, Initialen: {row["Initialen"]}, Menge: {row["Menge"]}");
-                            }
 
-                            foreach (DataRow row in ordersTable.Rows)
-                            {
                                 string insertSQL = $"INSERT INTO orders (Nachname, Vorname, Größe, Initialen, Menge) VALUES (@Nachname, @Vorname, @Größe, @Initialen, @Menge)";
                                 using (SQLiteCommand cmd = new SQLiteCommand(insertSQL, m_dbConnection))
                                 {
@@ -253,6 +324,9 @@ namespace SVU_Bestellungen
                                     cmd.Parameters.AddWithValue("@Initialen", row["Initialen"].ToString());
                                     cmd.Parameters.AddWithValue("@Menge", row["Menge"].ToString());
                                     cmd.ExecuteNonQuery();
+
+                                    // Status der Zeile in ordersTable auf gespeichert setzen
+                                    row["Status"] = true;
                                 }
                             }
 

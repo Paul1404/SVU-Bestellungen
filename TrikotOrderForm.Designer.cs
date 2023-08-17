@@ -124,7 +124,7 @@
             this.btnSaveOrders.TabIndex = 10;
             this.btnSaveOrders.Text = "Speichern";
             this.btnSaveOrders.UseVisualStyleBackColor = true;
-            this.btnSaveOrders.Click += new System.EventHandler(this.BtnSaveOrders_Click);
+            this.btnSaveOrders.Click += new System.EventHandler(this.SyncDataBase);
             // 
             // btnSaveSummary
             // 

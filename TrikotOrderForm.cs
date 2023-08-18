@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -18,9 +19,11 @@ namespace SVU_Bestellungen
         public TrikotOrderForm()
         {
             InitializeComponent();
+            InitializeDatabase();
             InitializeOrdersTable();
             InitializeControls();
-            LoadOrdersFromCSV();
+            LoadOrdersFromSQLite();
+            //LoadOrdersFromCSV();
             btnSaveSummary.Click += (s, e) => EvaluateOrderQuantities();
             this.AcceptButton = btnAddOrder;
             // this.BackgroundImage = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("SVU_Bestellungen.background.jpg"));
@@ -65,30 +68,56 @@ namespace SVU_Bestellungen
         }
 
 
-        private void LoadOrdersFromCSV()
+        //private void LoadOrdersFromCSV()
+        //{
+        //    if (File.Exists("bestellungen.csv"))
+        //    {
+        //        using (StreamReader sr = new StreamReader("bestellungen.csv", Encoding.UTF8))
+        //        {
+        //            string line;
+        //            while ((line = sr.ReadLine()) != null)
+        //            {
+        //                string[] values = line.Split(',');
+        //                if (values.Length == 5)
+        //                {
+        //                    DataRow row = ordersTable.NewRow();
+        //                    row["Nachname"] = values[0];
+        //                    row["Vorname"] = values[1];
+        //                    row["Größe"] = values[2];
+        //                    row["Initialen"] = values[3];
+        //                    row["Menge"] = int.Parse(values[4]); // Add this line
+        //                    ordersTable.Rows.Add(row);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        private void LoadOrdersFromSQLite()
         {
-            if (File.Exists("bestellungen.csv"))
+            using (SQLiteConnection conn = new SQLiteConnection("data source=bestellungen.db"))
             {
-                using (StreamReader sr = new StreamReader("bestellungen.csv", Encoding.UTF8))
+                conn.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Orders", conn))
                 {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        string[] values = line.Split(',');
-                        if (values.Length == 5)
+                        while (reader.Read())
                         {
                             DataRow row = ordersTable.NewRow();
-                            row["Nachname"] = values[0];
-                            row["Vorname"] = values[1];
-                            row["Größe"] = values[2];
-                            row["Initialen"] = values[3];
-                            row["Menge"] = int.Parse(values[4]); // Add this line
+                            row["Nachname"] = reader["Nachname"];
+                            row["Vorname"] = reader["Vorname"];
+                            row["Größe"] = reader["Größe"];
+                            row["Initialen"] = reader["Initialen"];
+                            row["Menge"] = int.Parse(reader["Menge"].ToString());
                             ordersTable.Rows.Add(row);
                         }
                     }
                 }
+                conn.Close();
             }
         }
+
 
 
         private void InitializeOrdersTable()
@@ -96,13 +125,33 @@ namespace SVU_Bestellungen
             ordersTable = new DataTable();
             ordersTable.Columns.Add("Nachname");
             ordersTable.Columns.Add("Vorname");
-            ordersTable.Columns.Add("Größe");  // Adding the Größe column
+            ordersTable.Columns.Add("Größe");
             ordersTable.Columns.Add("Initialen");
             ordersTable.Columns.Add("Menge", typeof(int));
 
             dataGridViewOrders.DataSource = ordersTable;
         }
 
+
+        private void InitializeDatabase()
+        {
+            if (!File.Exists("bestellungen.db"))
+            {
+                SQLiteConnection.CreateFile("bestellungen.db");
+            }
+
+            using (SQLiteConnection conn = new SQLiteConnection("data source=bestellungen.db"))
+            {
+                conn.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand(conn))
+                {
+                    cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Orders 
+                               (Nachname TEXT, Vorname TEXT, Größe TEXT, Initialen TEXT, Menge INT)";
+                    cmd.ExecuteNonQuery();
+                }
+                conn.Close();
+            }
+        }
 
 
         private void InitializeControls()
@@ -174,6 +223,27 @@ namespace SVU_Bestellungen
             }
         }
 
+        private void SaveOrderToSQLite(DataRow order)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection("data source=bestellungen.db"))
+            {
+                conn.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand(conn))
+                {
+                    cmd.CommandText = @"INSERT INTO Orders (Nachname, Vorname, Größe, Initialen, Menge) 
+                               VALUES (@Nachname, @Vorname, @Größe, @Initialen, @Menge)";
+                    cmd.Parameters.AddWithValue("@Nachname", order["Nachname"]);
+                    cmd.Parameters.AddWithValue("@Vorname", order["Vorname"]);
+                    cmd.Parameters.AddWithValue("@Größe", order["Größe"]);
+                    cmd.Parameters.AddWithValue("@Initialen", order["Initialen"]);
+                    cmd.Parameters.AddWithValue("@Menge", order["Menge"]);
+                    cmd.ExecuteNonQuery();
+                }
+                conn.Close();
+            }
+        }
+
+
         private void BtnAddOrder_Click(object sender, EventArgs e)
         {
             DataRow row = ordersTable.NewRow();
@@ -184,6 +254,9 @@ namespace SVU_Bestellungen
             row["Menge"] = numericUpDownQuantity.Value;
             ordersTable.Rows.Add(row);
 
+            // Save to SQLite
+            SaveOrderToSQLite(row);
+
             // Clear the input controls
             txtNachname.Clear();
             txtVorname.Clear();
@@ -191,6 +264,7 @@ namespace SVU_Bestellungen
             comboBoxSize.SelectedIndex = -1; // deselect any selected item
             numericUpDownQuantity.Value = 1;
         }
+
 
 
         private void BtnSaveOrders_Click(object sender, EventArgs e)

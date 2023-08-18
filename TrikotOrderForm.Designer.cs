@@ -44,6 +44,7 @@
             this.comboBoxSize = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.richTextBoxLogs = new System.Windows.Forms.RichTextBox();
+            this.BtnSaveOrders = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownQuantity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrders)).BeginInit();
             this.SuspendLayout();
@@ -177,15 +178,26 @@
             // 
             this.richTextBoxLogs.Location = new System.Drawing.Point(1204, 121);
             this.richTextBoxLogs.Name = "richTextBoxLogs";
-            this.richTextBoxLogs.Size = new System.Drawing.Size(417, 1019);
+            this.richTextBoxLogs.Size = new System.Drawing.Size(417, 971);
             this.richTextBoxLogs.TabIndex = 18;
             this.richTextBoxLogs.Text = "";
+            // 
+            // BtnSaveOrders
+            // 
+            this.BtnSaveOrders.Location = new System.Drawing.Point(1204, 1098);
+            this.BtnSaveOrders.Name = "BtnSaveOrders";
+            this.BtnSaveOrders.Size = new System.Drawing.Size(417, 55);
+            this.BtnSaveOrders.TabIndex = 19;
+            this.BtnSaveOrders.Text = "Tabelle als CSV speichern";
+            this.BtnSaveOrders.UseVisualStyleBackColor = true;
+            this.BtnSaveOrders.Click += new System.EventHandler(this.BtnSaveOrders_Click);
             // 
             // TrikotOrderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1633, 1168);
+            this.Controls.Add(this.BtnSaveOrders);
             this.Controls.Add(this.richTextBoxLogs);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.comboBoxSize);
@@ -228,6 +240,7 @@
         private System.Windows.Forms.ComboBox comboBoxSize;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.RichTextBox richTextBoxLogs;
+        private System.Windows.Forms.Button BtnSaveOrders;
     }
 }
 

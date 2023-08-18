@@ -36,7 +36,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnAddOrder = new System.Windows.Forms.Button();
             this.dataGridViewOrders = new System.Windows.Forms.DataGridView();
-            this.btnSaveOrders = new System.Windows.Forms.Button();
             this.btnSaveSummary = new System.Windows.Forms.Button();
             this.btnOpenFolder = new System.Windows.Forms.Button();
             this.txtNachname = new System.Windows.Forms.TextBox();
@@ -96,7 +95,7 @@
             // btnAddOrder
             // 
             this.btnAddOrder.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnAddOrder.Location = new System.Drawing.Point(611, 121);
+            this.btnAddOrder.Location = new System.Drawing.Point(610, 121);
             this.btnAddOrder.Name = "btnAddOrder";
             this.btnAddOrder.Size = new System.Drawing.Size(587, 55);
             this.btnAddOrder.TabIndex = 8;
@@ -108,23 +107,12 @@
             // 
             this.dataGridViewOrders.AllowUserToOrderColumns = true;
             this.dataGridViewOrders.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewOrders.Location = new System.Drawing.Point(12, 253);
+            this.dataGridViewOrders.Location = new System.Drawing.Point(12, 182);
             this.dataGridViewOrders.Name = "dataGridViewOrders";
             this.dataGridViewOrders.RowHeadersWidth = 62;
             this.dataGridViewOrders.RowTemplate.Height = 28;
-            this.dataGridViewOrders.Size = new System.Drawing.Size(1186, 900);
+            this.dataGridViewOrders.Size = new System.Drawing.Size(1186, 971);
             this.dataGridViewOrders.TabIndex = 9;
-            // 
-            // btnSaveOrders
-            // 
-            this.btnSaveOrders.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSaveOrders.Location = new System.Drawing.Point(249, 121);
-            this.btnSaveOrders.Name = "btnSaveOrders";
-            this.btnSaveOrders.Size = new System.Drawing.Size(223, 55);
-            this.btnSaveOrders.TabIndex = 10;
-            this.btnSaveOrders.Text = "Speichern";
-            this.btnSaveOrders.UseVisualStyleBackColor = true;
-            this.btnSaveOrders.Click += new System.EventHandler(this.BtnSaveOrders_Click);
             // 
             // btnSaveSummary
             // 
@@ -139,7 +127,7 @@
             // btnOpenFolder
             // 
             this.btnOpenFolder.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnOpenFolder.Location = new System.Drawing.Point(12, 182);
+            this.btnOpenFolder.Location = new System.Drawing.Point(245, 121);
             this.btnOpenFolder.Name = "btnOpenFolder";
             this.btnOpenFolder.Size = new System.Drawing.Size(223, 55);
             this.btnOpenFolder.TabIndex = 12;
@@ -187,9 +175,9 @@
             // 
             // richTextBoxLogs
             // 
-            this.richTextBoxLogs.Location = new System.Drawing.Point(1204, 253);
+            this.richTextBoxLogs.Location = new System.Drawing.Point(1204, 121);
             this.richTextBoxLogs.Name = "richTextBoxLogs";
-            this.richTextBoxLogs.Size = new System.Drawing.Size(417, 887);
+            this.richTextBoxLogs.Size = new System.Drawing.Size(417, 1019);
             this.richTextBoxLogs.TabIndex = 18;
             this.richTextBoxLogs.Text = "";
             // 
@@ -206,7 +194,6 @@
             this.Controls.Add(this.txtNachname);
             this.Controls.Add(this.btnOpenFolder);
             this.Controls.Add(this.btnSaveSummary);
-            this.Controls.Add(this.btnSaveOrders);
             this.Controls.Add(this.dataGridViewOrders);
             this.Controls.Add(this.btnAddOrder);
             this.Controls.Add(this.label4);
@@ -233,7 +220,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnAddOrder;
         private System.Windows.Forms.DataGridView dataGridViewOrders;
-        private System.Windows.Forms.Button btnSaveOrders;
         private System.Windows.Forms.Button btnSaveSummary;
         private System.Windows.Forms.Button btnOpenFolder;
         private System.Windows.Forms.TextBox txtNachname;

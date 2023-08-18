@@ -44,6 +44,7 @@
             this.txtInitialen = new System.Windows.Forms.TextBox();
             this.comboBoxSize = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.richTextBoxLogs = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownQuantity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrders)).BeginInit();
             this.SuspendLayout();
@@ -77,7 +78,7 @@
             // 
             // numericUpDownQuantity
             // 
-            this.numericUpDownQuantity.Cursor = System.Windows.Forms.Cursors.SizeNS;
+            this.numericUpDownQuantity.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.numericUpDownQuantity.Location = new System.Drawing.Point(1077, 56);
             this.numericUpDownQuantity.Name = "numericUpDownQuantity";
             this.numericUpDownQuantity.Size = new System.Drawing.Size(120, 26);
@@ -184,11 +185,20 @@
             this.label5.TabIndex = 17;
             this.label5.Text = "Größe";
             // 
+            // richTextBoxLogs
+            // 
+            this.richTextBoxLogs.Location = new System.Drawing.Point(1204, 253);
+            this.richTextBoxLogs.Name = "richTextBoxLogs";
+            this.richTextBoxLogs.Size = new System.Drawing.Size(417, 887);
+            this.richTextBoxLogs.TabIndex = 18;
+            this.richTextBoxLogs.Text = "";
+            // 
             // TrikotOrderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1209, 1168);
+            this.ClientSize = new System.Drawing.Size(1633, 1168);
+            this.Controls.Add(this.richTextBoxLogs);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.comboBoxSize);
             this.Controls.Add(this.txtInitialen);
@@ -231,6 +241,7 @@
         private System.Windows.Forms.TextBox txtInitialen;
         private System.Windows.Forms.ComboBox comboBoxSize;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.RichTextBox richTextBoxLogs;
     }
 }
 

@@ -40,7 +40,30 @@ namespace SVU_Bestellungen
         private void TrikotOrderForm_Load(object sender, EventArgs e)
         {
             txtNachname.Focus();
+            numericUpDownQuantity.Value = 1;
         }
+
+        private void LogMessage(string message)
+        {
+            string timestamp = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            richTextBoxLogs.AppendText($"[INFO {timestamp}] {message}\n");
+            richTextBoxLogs.ScrollToCaret(); // Scroll to the end of the logs
+        }
+
+        private void ErrorMessage(string message)
+        {
+            string timestamp = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            richTextBoxLogs.SelectionStart = richTextBoxLogs.TextLength;
+            richTextBoxLogs.SelectionLength = 0;
+
+            // Changing color to red for errors
+            richTextBoxLogs.SelectionColor = Color.Red;
+            richTextBoxLogs.AppendText($"[ERROR {timestamp}] {message}\n");
+            richTextBoxLogs.SelectionColor = richTextBoxLogs.ForeColor;
+
+            richTextBoxLogs.ScrollToCaret(); // Scroll to the end of the logs
+        }
+
 
         private void LoadOrdersFromCSV()
         {
@@ -79,6 +102,8 @@ namespace SVU_Bestellungen
 
             dataGridViewOrders.DataSource = ordersTable;
         }
+
+
 
         private void InitializeControls()
         {
@@ -164,7 +189,7 @@ namespace SVU_Bestellungen
             txtVorname.Clear();
             txtInitialen.Clear();
             comboBoxSize.SelectedIndex = -1; // deselect any selected item
-            numericUpDownQuantity.Value = numericUpDownQuantity.Minimum; // or set it to some default value if you have
+            numericUpDownQuantity.Value = 1;
         }
 
 
@@ -178,7 +203,7 @@ namespace SVU_Bestellungen
                 }
 
             }
-            MessageBox.Show("Bestellungen gespeichert!");
+            LogMessage("Bestellungen gespeichert!");
         }
 
         private void EvaluateOrderQuantities()
@@ -220,8 +245,8 @@ namespace SVU_Bestellungen
                 orderSummary.AppendLine($"Größe {entry.Key}: {entry.Value} Stück");
             }
 
-            MessageBox.Show(orderSummary.ToString());
-            MessageBox.Show("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
+            LogMessage(orderSummary.ToString());
+            LogMessage("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
         }
 
 
@@ -242,7 +267,7 @@ namespace SVU_Bestellungen
                 }
                 else
                 {
-                    MessageBox.Show("Konnte den Ordner nicht finden.");
+                    LogMessage("Konnte den Ordner nicht finden.");
                 }
             }
             catch (Exception ex)

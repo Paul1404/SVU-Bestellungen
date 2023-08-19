@@ -15,6 +15,7 @@ namespace SVU_Bestellungen
     public partial class TrikotOrderForm : Form
     {
         private DataTable ordersTable;
+        private const string ConnectionString = "data source=bestellungen.db";
 
         public TrikotOrderForm()
         {
@@ -26,7 +27,7 @@ namespace SVU_Bestellungen
             //LoadOrdersFromCSV();
             btnSaveSummary.Click += (s, e) => EvaluateOrderQuantities();
             this.AcceptButton = btnAddOrder;
-            // this.BackgroundImage = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("SVU_Bestellungen.background.jpg"));
+            this.BackgroundImage = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("SVU_Bestellungen.RedAbstractShapesSmall.jpg"));
             dataGridViewOrders.BorderStyle = BorderStyle.None;
             dataGridViewOrders.VirtualMode = true;
             dataGridViewOrders.ScrollBars = ScrollBars.Vertical;
@@ -147,6 +148,36 @@ namespace SVU_Bestellungen
         //}
 
 
+        private void BackupDatabaseInCurrentDirectoryWithTimestamp()
+        {
+            // Get current directory
+            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string sourcePath = Path.Combine(currentDirectory, "bestellungen.db");
+
+            // Create a backup directory if it doesn't exist
+            string backupDirectory = Path.Combine(currentDirectory, "Backup");
+            if (!Directory.Exists(backupDirectory))
+            {
+                Directory.CreateDirectory(backupDirectory);
+            }
+
+            // Construct the backup path using a timestamp
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string backupPath = Path.Combine(backupDirectory, $"database_backup_{timestamp}.db");
+
+            using (var sourceConnection = new SQLiteConnection($"Data Source={sourcePath}"))
+            using (var destinationConnection = new SQLiteConnection($"Data Source={backupPath}"))
+            {
+                sourceConnection.Open();
+                destinationConnection.Open();
+
+                sourceConnection.BackupDatabase(destinationConnection, "main", "main", -1, null, -1);
+            }
+
+            LogMessage($"Backup completed at {backupPath}!");
+        }
+
+
         /// <summary>
         /// Loads order records from the SQLite database and populates the ordersTable.
         /// </summary>
@@ -164,11 +195,12 @@ namespace SVU_Bestellungen
         /// </remarks>
         private void LoadOrdersFromSQLite()
         {
-            using (SQLiteConnection conn = new SQLiteConnection("data source=bestellungen.db"))
+            try
             {
-                conn.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Orders", conn))
+                using (SQLiteConnection conn = new SQLiteConnection(ConnectionString))
+                using (SQLiteCommand cmd = new SQLiteCommand("SELECT Nachname, Vorname, Größe, Initialen, Menge FROM Orders", conn))
                 {
+                    conn.Open();
                     using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -178,12 +210,27 @@ namespace SVU_Bestellungen
                             row["Vorname"] = reader["Vorname"];
                             row["Größe"] = reader["Größe"];
                             row["Initialen"] = reader["Initialen"];
-                            row["Menge"] = int.Parse(reader["Menge"].ToString());
+
+                            if (int.TryParse(reader["Menge"].ToString(), out int mengeValue))
+                            {
+                                row["Menge"] = mengeValue;
+                            }
+                            else
+                            {
+                                // Handle invalid integer data
+                                // Maybe set a default value or log an error
+                                row["Menge"] = 0;
+                            }
+
                             ordersTable.Rows.Add(row);
                         }
                     }
                 }
-                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions here, for example, log the error or show a user-friendly message
+                LogMessage($"Error loading orders: {ex.Message}");
             }
         }
 
@@ -242,16 +289,14 @@ namespace SVU_Bestellungen
                 SQLiteConnection.CreateFile("bestellungen.db");
             }
 
-            using (SQLiteConnection conn = new SQLiteConnection("data source=bestellungen.db"))
+            using (SQLiteConnection conn = new SQLiteConnection(ConnectionString))
+            using (SQLiteCommand cmd = new SQLiteCommand(conn))
             {
                 conn.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(conn))
-                {
-                    cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Orders 
-                               (Nachname TEXT, Vorname TEXT, Größe TEXT, Initialen TEXT, Menge INT)";
-                    cmd.ExecuteNonQuery();
-                }
-                conn.Close();
+
+                cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Orders 
+                            (Nachname TEXT, Vorname TEXT, Größe TEXT, Initialen TEXT, Menge INT)";
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -291,59 +336,61 @@ namespace SVU_Bestellungen
                 ctrl.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
 
                 // Specific Control Styling
-                if (ctrl is Button)
+                switch (ctrl)
                 {
-                    var button = ctrl as Button;
-                    button.BackColor = System.Drawing.Color.DarkRed;
-                    button.ForeColor = System.Drawing.Color.White;
-                    button.FlatStyle = FlatStyle.Flat;
-                    button.FlatAppearance.BorderColor = System.Drawing.Color.DarkRed;
-                    button.FlatAppearance.BorderSize = 1;
-                }
-                else if (ctrl is ComboBox)
-                {
-                    var comboBox = ctrl as ComboBox;
-                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-                }
-                else if (ctrl is DataGridView)
-                {
-                    var dgv = ctrl as DataGridView;
-                    dgv.BackgroundColor = System.Drawing.Color.White;
-                    dgv.BorderStyle = BorderStyle.None;
-                    dgv.GridColor = System.Drawing.Color.DarkRed;
-                    dgv.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.LightCoral;
-                    dgv.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
-                    dgv.RowHeadersVisible = false;
-                    dgv.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.DarkRed;
-                    dgv.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-                    dgv.EnableHeadersVisualStyles = false;
-                }
-                else if (ctrl is TextBox)
-                {
-                    var txt = ctrl as TextBox;
-                }
-            }
-
-            // Button Hover Effects
-            foreach (Control ctrl in this.Controls)
-            {
-                if (ctrl is Button)
-                {
-                    var button = ctrl as Button;
-                    button.MouseEnter += (s, e) =>
-                    {
-                        button.BackColor = System.Drawing.Color.White;
-                        button.ForeColor = System.Drawing.Color.DarkRed;
-                        button.FlatAppearance.BorderColor = System.Drawing.Color.White;
-                    };
-                    button.MouseLeave += (s, e) =>
-                    {
+                    case Button button:
                         button.BackColor = System.Drawing.Color.DarkRed;
                         button.ForeColor = System.Drawing.Color.White;
-                    };
+                        button.FlatStyle = FlatStyle.Flat;
+                        button.FlatAppearance.BorderColor = System.Drawing.Color.White;
+                        button.FlatAppearance.BorderSize = 1;
+
+                        // Button Hover Effects
+                        button.MouseEnter += (s, e) =>
+                        {
+                            button.BackColor = System.Drawing.Color.White;
+                            button.ForeColor = System.Drawing.Color.DarkRed;
+                            button.FlatAppearance.BorderColor = System.Drawing.Color.White;
+                        };
+                        button.MouseLeave += (s, e) =>
+                        {
+                            button.BackColor = System.Drawing.Color.DarkRed;
+                            button.ForeColor = System.Drawing.Color.White;
+                        };
+                        break;
+
+                    case ComboBox comboBox:
+                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                        break;
+
+                    case DataGridView dgv:
+                        dgv.BackgroundColor = System.Drawing.Color.White;
+                        dgv.BorderStyle = BorderStyle.None;
+                        dgv.GridColor = System.Drawing.Color.DarkRed;
+                        dgv.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.LightCoral;
+                        dgv.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                        dgv.RowHeadersVisible = false;
+                        dgv.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.DarkRed;
+                        dgv.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                        dgv.EnableHeadersVisualStyles = false;
+                        break;
+
+                    // Add any TextBox styling here if necessary
+                    case TextBox txt:
+                        break;
+
+                    case Label label:
+                        label.BackColor = Color.DarkRed;
+                        label.ForeColor = Color.White;
+                        label.Paint += (s, e) =>
+                        {
+                            ControlPaint.DrawBorder(e.Graphics, label.DisplayRectangle, Color.White, ButtonBorderStyle.Solid);
+                        };
+                        break;
                 }
             }
         }
+
 
 
         /// <summary>
@@ -424,6 +471,11 @@ namespace SVU_Bestellungen
             txtInitialen.Clear();
             comboBoxSize.SelectedIndex = -1; // deselect any selected item
             numericUpDownQuantity.Value = 1;
+        }
+
+        private void BtnBackupDatabase_Click(object sender, EventArgs e)
+        {
+            BackupDatabaseInCurrentDirectoryWithTimestamp();
         }
 
 

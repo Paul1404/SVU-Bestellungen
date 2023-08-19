@@ -53,7 +53,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(56, 21);
+            this.label1.Location = new System.Drawing.Point(56, 32);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(90, 20);
             this.label1.TabIndex = 2;
@@ -62,7 +62,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(285, 21);
+            this.label2.Location = new System.Drawing.Point(285, 32);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(78, 20);
             this.label2.TabIndex = 3;
@@ -71,7 +71,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(514, 21);
+            this.label3.Location = new System.Drawing.Point(514, 32);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(64, 20);
             this.label3.TabIndex = 5;
@@ -80,7 +80,7 @@
             // numericUpDownQuantity
             // 
             this.numericUpDownQuantity.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.numericUpDownQuantity.Location = new System.Drawing.Point(1682, 58);
+            this.numericUpDownQuantity.Location = new System.Drawing.Point(1682, 71);
             this.numericUpDownQuantity.Name = "numericUpDownQuantity";
             this.numericUpDownQuantity.Size = new System.Drawing.Size(120, 26);
             this.numericUpDownQuantity.TabIndex = 6;
@@ -88,7 +88,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1678, 21);
+            this.label4.Location = new System.Drawing.Point(1678, 32);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(58, 20);
             this.label4.TabIndex = 7;
@@ -139,21 +139,21 @@
             // 
             // txtNachname
             // 
-            this.txtNachname.Location = new System.Drawing.Point(60, 55);
+            this.txtNachname.Location = new System.Drawing.Point(60, 71);
             this.txtNachname.Name = "txtNachname";
             this.txtNachname.Size = new System.Drawing.Size(223, 26);
             this.txtNachname.TabIndex = 13;
             // 
             // txtVorname
             // 
-            this.txtVorname.Location = new System.Drawing.Point(289, 56);
+            this.txtVorname.Location = new System.Drawing.Point(289, 71);
             this.txtVorname.Name = "txtVorname";
             this.txtVorname.Size = new System.Drawing.Size(223, 26);
             this.txtVorname.TabIndex = 14;
             // 
             // txtInitialen
             // 
-            this.txtInitialen.Location = new System.Drawing.Point(518, 56);
+            this.txtInitialen.Location = new System.Drawing.Point(518, 71);
             this.txtInitialen.Name = "txtInitialen";
             this.txtInitialen.Size = new System.Drawing.Size(227, 26);
             this.txtInitialen.TabIndex = 15;
@@ -161,7 +161,7 @@
             // comboBoxSize
             // 
             this.comboBoxSize.FormattingEnabled = true;
-            this.comboBoxSize.Location = new System.Drawing.Point(751, 56);
+            this.comboBoxSize.Location = new System.Drawing.Point(751, 69);
             this.comboBoxSize.Name = "comboBoxSize";
             this.comboBoxSize.Size = new System.Drawing.Size(227, 28);
             this.comboBoxSize.TabIndex = 16;
@@ -169,7 +169,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(747, 21);
+            this.label5.Location = new System.Drawing.Point(747, 32);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(55, 20);
             this.label5.TabIndex = 17;
@@ -207,7 +207,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2237, 1336);
+            this.ClientSize = new System.Drawing.Size(2283, 1336);
             this.Controls.Add(this.buttonBackupDatabase);
             this.Controls.Add(this.BtnSaveOrders);
             this.Controls.Add(this.richTextBoxLogs);

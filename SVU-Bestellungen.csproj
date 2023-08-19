@@ -27,6 +27,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>https://raw.githubusercontent.com/Paul1404/SVU-Bestellungen/SQLite-Implementation/published/</InstallUrl>
+    <UpdateUrl>https://raw.githubusercontent.com/Paul1404/SVU-Bestellungen/SQLite-Implementation/published/</UpdateUrl>
     <TargetCulture>de</TargetCulture>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>

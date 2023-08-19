@@ -33,8 +33,13 @@
     <WebPage>publish.htm</WebPage>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ApplicationRevision>13</ApplicationRevision>
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+=======
+    <ApplicationRevision>22</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+>>>>>>> parent of 0e37aa6 (Final Publish that works)
 =======
     <ApplicationRevision>22</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>

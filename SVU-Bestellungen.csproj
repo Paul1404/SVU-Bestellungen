@@ -16,11 +16,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-<<<<<<< HEAD
     <PublishUrl>C:\Users\paul\source\repos\Paul1404\SVU-Bestellungen\published\</PublishUrl>
-=======
-    <PublishUrl>C:\Users\paul\Desktop\SVU-Bestellungen\Release2\</PublishUrl>
->>>>>>> parent of d71e3d3 (Changed Icon + Design)
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -33,7 +29,6 @@
     <InstallUrl>https://raw.githubusercontent.com/Paul1404/SVU-Bestellungen/SQLite-Implementation/published/</InstallUrl>
     <UpdateUrl>https://raw.githubusercontent.com/Paul1404/SVU-Bestellungen/SQLite-Implementation/published/</UpdateUrl>
     <TargetCulture>de</TargetCulture>
-<<<<<<< HEAD
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
 <<<<<<< HEAD
@@ -46,9 +41,6 @@
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
 =======
     <ApplicationRevision>22</ApplicationRevision>
-=======
-    <ApplicationRevision>11</ApplicationRevision>
->>>>>>> parent of d71e3d3 (Changed Icon + Design)
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 >>>>>>> parent of 0e37aa6 (Final Publish that works)
 =======
@@ -109,7 +101,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>application.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -199,6 +191,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="application.ico" />
     <Content Include="favicon.ico" />
     <EmbeddedResource Include="RedAbstractShapesSmall.jpg" />
     <Content Include="x64\SQLite.Interop.dll" />

@@ -3,7 +3,7 @@ name: Zip and Release
 on:
   push:
     branches:
-      - SQLite-Implementation-V2  # or your default branch name
+      - SQLite-Implementation-V2  # Adjust this if needed
 
 jobs:
   release:
@@ -14,15 +14,22 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Zip folder
-      run: zip -r Release.zip published/  # Replace 'my_folder/' with the path to your folder
+      run: zip -r Release.zip published/  # This will create 'Release.zip' from the 'published/' folder
+
+    - name: Create Tag
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag release-${{ github.sha }}
+        git push origin release-${{ github.sha }}
 
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # This token is provided by Actions
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.sha }}
+        tag_name: release-${{ github.sha }}
         release_name: Release ${{ github.sha }}
         draft: false
         prerelease: false
@@ -34,6 +41,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./my_folder.zip
-        asset_name: my_folder.zip
+        asset_path: ./Release.zip
+        asset_name: Release.zip
         asset_content_type: application/zip

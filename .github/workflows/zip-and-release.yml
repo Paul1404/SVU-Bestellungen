@@ -14,7 +14,13 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Zip folder excluding .gitignore patterns
-      run: zip -r Release.zip published/ -x $(git check-ignore -v published/* | awk '{print $2}')
+      run: |
+        if [ -n "$(git check-ignore -v published/* | awk '{print $2}')" ]; then
+            exclude_patterns=$(git check-ignore -v published/* | awk '{print $2}' | tr '\n' ' ')
+            zip -r Release.zip published/ -x $exclude_patterns
+        else
+            zip -r Release.zip published/
+        fi
 
     - name: Get current date
       id: current_time

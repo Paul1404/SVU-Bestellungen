@@ -73,9 +73,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(514, 32);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 20);
+            this.label3.Size = new System.Drawing.Size(68, 20);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Initialen";
+            this.label3.Text = "Initialen:";
             // 
             // numericUpDownQuantity
             // 
@@ -90,9 +90,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(1678, 32);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(58, 20);
+            this.label4.Size = new System.Drawing.Size(62, 20);
             this.label4.TabIndex = 7;
-            this.label4.Text = "Menge";
+            this.label4.Text = "Menge:";
             // 
             // btnAddOrder
             // 
@@ -171,9 +171,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(747, 32);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(55, 20);
+            this.label5.Size = new System.Drawing.Size(59, 20);
             this.label5.TabIndex = 17;
-            this.label5.Text = "Größe";
+            this.label5.Text = "Größe:";
             // 
             // richTextBoxLogs
             // 

@@ -24,7 +24,7 @@ jobs:
 
     - name: Get current date
       id: current_time
-      run: echo "::set-output name=timestamp::$(date +'%H_%M_%Y')"  # Using underscores here
+      run: echo "TIMESTAMP=$(date +'%d_%m_%Y')" >> $GITHUB_ENV  # Using underscores here
 
 
     - name: Create Tag

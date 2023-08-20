@@ -1,9 +1,11 @@
+# Rerun on 20-08-2023
+
 name: Create Tag and Release
 
 on:
   push:
     branches:
-      - SQLite-Implementation-V2  # Adjust this if needed
+      - SQLite-Implementation-V2
 
 jobs:
   release:

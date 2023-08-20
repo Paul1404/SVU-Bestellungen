@@ -189,7 +189,7 @@
             this.BtnSaveOrders.Name = "BtnSaveOrders";
             this.BtnSaveOrders.Size = new System.Drawing.Size(417, 55);
             this.BtnSaveOrders.TabIndex = 19;
-            this.BtnSaveOrders.Text = "Tabelle als CSV speichern";
+            this.BtnSaveOrders.Text = "Tabelle als CSV-Datei speichern";
             this.BtnSaveOrders.UseVisualStyleBackColor = true;
             this.BtnSaveOrders.Click += new System.EventHandler(this.BtnSaveOrders_Click);
             // 

@@ -24,14 +24,16 @@ jobs:
 
     - name: Get current date
       id: current_time
-      run: echo "::set-output name=timestamp::$(date +'%H:%M:%Y')"
+      run: echo "::set-output name=timestamp::$(date +'%H_%M_%Y')"  # Using underscores here
+
 
     - name: Create Tag
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git tag release-${{ github.sha }}-${{ steps.current_time.outputs.timestamp }}
-        git push origin release-${{ github.sha }}-${{ steps.current_time.outputs.timestamp }}
+        git tag release-${{ github.sha }}_${{ steps.current_time.outputs.timestamp }}  # Using underscore here
+        git push origin release-${{ github.sha }}_${{ steps.current_time.outputs.timestamp }}  # Using underscore here
+
 
     - name: Create Release
       id: create_release

@@ -8,7 +8,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace SVU_Bestellungen
@@ -339,7 +338,7 @@ namespace SVU_Bestellungen
                 // Specific Control Styling
                 switch (ctrl)
                 {
-                    case System.Windows.Forms.Button button:
+                    case Button button:
                         button.BackColor = System.Drawing.Color.DarkRed;
                         button.ForeColor = System.Drawing.Color.White;
                         button.FlatStyle = FlatStyle.Flat;
@@ -360,11 +359,11 @@ namespace SVU_Bestellungen
                         };
                         break;
 
-                    case System.Windows.Forms.ComboBox comboBox:
+                    case ComboBox comboBox:
                         comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
                         break;
 
-                    case System.Windows.Forms.DataGridView dgv:
+                    case DataGridView dgv:
                         dgv.BackgroundColor = System.Drawing.Color.White;
                         dgv.BorderStyle = BorderStyle.None;
                         dgv.GridColor = System.Drawing.Color.DarkRed;
@@ -377,10 +376,10 @@ namespace SVU_Bestellungen
                         break;
 
                     // Add any TextBox styling here if necessary
-                    case System.Windows.Forms.TextBox txt:
+                    case TextBox txt:
                         break;
 
-                    case System.Windows.Forms.Label label:
+                    case Label label:
                         label.BackColor = Color.DarkRed;
                         label.ForeColor = Color.White;
                         label.Paint += (s, e) =>
@@ -572,32 +571,6 @@ namespace SVU_Bestellungen
             LogMessage(orderSummary.ToString());
             LogMessage("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
         }
-
-        //private void InitializeTooltips()
-        //{
-        //    toolStrip1.SetToolTip(this.label1, "Beschreibung für label1"); // Ersetzen Sie durch eine genauere Nachricht basierend auf dem Zweck des Labels
-        //    toolStrip1.SetToolTip(this.label2, "Beschreibung für label2");
-        //    // ... Für andere Labels wiederholen ...
-
-        //    toolStrip1.SetToolTip(this.numericUpDownQuantity, "Setzen Sie die Menge mit den Auf- und Ab-Pfeilen.");
-
-        //    toolStrip1.SetToolTip(this.txtNachname, "Geben Sie hier den Nachnamen ein.");
-        //    toolStrip1.SetToolTip(this.txtVorname, "Geben Sie hier den Vornamen ein.");
-        //    toolStrip1.SetToolTip(this.txtInitialen, "Geben Sie die Initialen hier ein.");
-
-        //    toolStrip1.SetToolTip(this.comboBoxSize, "Wählen Sie die gewünschte Größe aus dem Dropdown-Menü aus.");
-
-        //    toolStrip1.SetToolTip(this.btnAddOrder, "Klicken Sie hier, um eine neue Bestellung mit den angegebenen Details hinzuzufügen.");
-        //    toolStrip1.SetToolTip(this.dataGridViewOrders, "Hier können Sie alle Bestellungen ansehen und verwalten.");
-        //    toolStrip1.SetToolTip(this.btnSaveSummary, "Speichern Sie eine Zusammenfassung aller Bestellungen.");
-        //    toolStrip1.SetToolTip(this.btnOpenFolder, "Öffnen Sie das Verzeichnis, in dem die Bestellungen gespeichert sind.");
-        //    toolStrip1.SetToolTip(this.BtnSaveOrders, "Speichern Sie alle aktuellen Bestellungen in der Datenbank.");
-        //    toolStrip1.SetToolTip(this.buttonBackupDatabase, "Erstellen Sie eine Sicherungskopie der aktuellen Datenbank.");
-
-        //    toolStrip1.SetToolTip(this.richTextBoxLogs, "Hier können Sie Protokollnachrichten und Vorgänge ansehen.");
-
-        //    // Wenn die ToolStrip spezifische Funktionen oder Tools hat, können für einzelne Elemente innerhalb von ihr Tooltips hinzugefügt werden
-        //}
 
 
         /// <summary>

@@ -3,26 +3,46 @@ name: Zip and Release
 on:
   push:
     branches:
-      - SQLite-Implementation-V2  # or your default branch name
+      - SQLite-Implementation-V2  # Adjust this if needed
 
 jobs:
   release:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Zip folder
-      run: zip -r Release.zip published/  # Replace 'my_folder/' with the path to your folder
+    - name: Zip folder excluding .gitignore patterns
+      run: |
+        if [ -n "$(git check-ignore -v published/* | awk '{print $2}')" ]; then
+            exclude_patterns=$(git check-ignore -v published/* | awk '{print $2}' | tr '\n' ' ')
+            zip -r Release.zip published/ -x $exclude_patterns
+        else
+            zip -r Release.zip published/
+        fi
+
+    - name: Get current date
+      id: current_time
+      run: echo "::set-output name=timestamp::$(date +'%H_%M_%Y')"  # Using underscores here
+
+
+    - name: Create Tag
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag release-${{ github.sha }}_${{ steps.current_time.outputs.timestamp }}  # Using underscore here
+        git push origin release-${{ github.sha }}_${{ steps.current_time.outputs.timestamp }}  # Using underscore here
+
 
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # This token is provided by Actions
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.sha }}
-        release_name: Release ${{ github.sha }}
+        tag_name: release-${{ github.sha }}-${{ steps.current_time.outputs.timestamp }}
+        release_name: Release ${{ steps.current_time.outputs.timestamp }}
         draft: false
         prerelease: false
 
@@ -33,6 +53,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./my_folder.zip
-        asset_name: my_folder.zip
+        asset_path: ./Release.zip
+        asset_name: Release.zip
         asset_content_type: application/zip

@@ -1,0 +1,38 @@
+name: Create Tag, Zip Folder, and Release
+
+on:
+  push:
+    branches:
+      - SQLite-Implementation-V2
+  workflow_dispatch: # This lets you manually trigger the action
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Get current date
+      id: current_time
+      run: echo "TIMESTAMP=$(date +'%d_%m_%Y')" >> $GITHUB_ENV
+
+    - name: Zip published folder
+      run: zip -r Release.zip published/
+
+    - name: Create Tag
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag release-${{ github.sha }}_${{ env.TIMESTAMP }}
+        git push origin release-${{ github.sha }}_${{ env.TIMESTAMP }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+    - name: Create Release and Upload Asset
+      run: |
+        gh release create release-${{ github.sha }}_${{ env.TIMESTAMP }} ./Release.zip --title "Release for ${{ env.TIMESTAMP }}" --notes "Release notes for ${{ env.TIMESTAMP }}"
+      env:
+        GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        GH_CLI_TRUSTED: "true"
+

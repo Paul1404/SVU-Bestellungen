@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Determine latest version
       id: get_version
@@ -29,9 +31,14 @@ jobs:
     - name: Get commits since last release
       id: get_commits
       run: |
-        LAST_TAG=$(git describe --tags --abbrev=0)
-        COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
-        echo "COMMITS=$COMMITS" >> $GITHUB_ENV
+        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
+        if [ -z "$LAST_TAG" ]; then
+            # If no tags are found, list commits from the beginning
+            COMMITS=$(git log --pretty=format:"- %s" | base64)
+        else
+            COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"- %s" | base64)
+        fi
+        echo "::set-output name=commits::$COMMITS"
 
     - name: Zip published folder
       run: zip -r Release.zip published/
@@ -47,7 +54,7 @@ jobs:
 
     - name: Create Release and Upload Asset
       run: |
-        gh release create v${{ env.VERSION }} ./Release.zip --title "Release v${{ env.VERSION }} for ${{ env.TIMESTAMP }}" --notes "Commits since last release:\n\n${{ env.COMMITS }}"
+        gh release create v${{ env.VERSION }} ./Release.zip --title "Release v${{ env.VERSION }} for ${{ env.TIMESTAMP }}" --notes "Commits since last release:$(echo -e '\n\n')$(echo '${{ steps.get_commits.outputs.commits }}' | base64 --decode)"
       env:
         GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         GH_CLI_TRUSTED: "true"

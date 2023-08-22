@@ -3,7 +3,7 @@ name: Create Tag, Zip Folder, and Release
 on:
   push:
     branches:
-      - main
+      - MainV2
   workflow_dispatch: # This lets you manually trigger the action
 
 jobs:

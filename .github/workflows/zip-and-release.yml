@@ -3,7 +3,7 @@ name: Create Tag, Zip Folder, and Release
 on:
   push:
     branches:
-      - SQLite-Implementation-V2
+      - main
   workflow_dispatch: # This lets you manually trigger the action
 
 jobs:
@@ -12,6 +12,13 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Determine latest version
+      id: get_version
+      run: |
+        VERSION=$(ls published/Application\ Files/ | grep 'SVU-Bestellungen_' | sort -V | tail -n 1 | sed 's/SVU-Bestellungen_//g')
+        echo "Latest version is: $VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Get current date
       id: current_time
@@ -24,15 +31,14 @@ jobs:
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git tag release-${{ github.sha }}_${{ env.TIMESTAMP }}
-        git push origin release-${{ github.sha }}_${{ env.TIMESTAMP }}
+        git tag v${{ env.VERSION }}
+        git push origin v${{ env.VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
     - name: Create Release and Upload Asset
       run: |
-        gh release create release-${{ github.sha }}_${{ env.TIMESTAMP }} ./Release.zip --title "Release for ${{ env.TIMESTAMP }}" --notes "Release notes for ${{ env.TIMESTAMP }}"
+        gh release create v${{ env.VERSION }} ./Release.zip --title "Release v${{ env.VERSION }} for ${{ env.TIMESTAMP }}" --notes "Release notes for v${{ env.VERSION }} on ${{ env.TIMESTAMP }}"
       env:
         GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         GH_CLI_TRUSTED: "true"
-

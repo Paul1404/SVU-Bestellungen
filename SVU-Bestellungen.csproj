@@ -33,7 +33,7 @@
     <ProductName>SVU-Bestellungen</ProductName>
     <PublisherName>Paul Dresch</PublisherName>
     <SuiteName>SVU-Bestellungen</SuiteName>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.1.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

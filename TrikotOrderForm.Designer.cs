@@ -179,12 +179,14 @@
             // 
             this.richTextBoxLogs.Location = new System.Drawing.Point(1808, 121);
             this.richTextBoxLogs.Name = "richTextBoxLogs";
+            this.richTextBoxLogs.ReadOnly = true;
             this.richTextBoxLogs.Size = new System.Drawing.Size(417, 1041);
             this.richTextBoxLogs.TabIndex = 18;
             this.richTextBoxLogs.Text = "";
             // 
             // BtnSaveOrders
             // 
+            this.BtnSaveOrders.Cursor = System.Windows.Forms.Cursors.Hand;
             this.BtnSaveOrders.Location = new System.Drawing.Point(1808, 1229);
             this.BtnSaveOrders.Name = "BtnSaveOrders";
             this.BtnSaveOrders.Size = new System.Drawing.Size(417, 55);
@@ -195,6 +197,7 @@
             // 
             // buttonBackupDatabase
             // 
+            this.buttonBackupDatabase.Cursor = System.Windows.Forms.Cursors.Hand;
             this.buttonBackupDatabase.Location = new System.Drawing.Point(1808, 1168);
             this.buttonBackupDatabase.Name = "buttonBackupDatabase";
             this.buttonBackupDatabase.Size = new System.Drawing.Size(417, 55);

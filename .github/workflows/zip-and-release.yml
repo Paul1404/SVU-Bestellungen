@@ -34,9 +34,9 @@ jobs:
         LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
         if [ -z "$LAST_TAG" ]; then
             # If no tags are found, list commits from the beginning
-            COMMITS=$(git log --pretty=format:"- %s")
+            COMMITS=$(git log --pretty=format:"- %s" | base64)
         else
-            COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
+            COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"- %s" | base64)
         fi
         echo "COMMITS=$COMMITS" >> $GITHUB_ENV
 
@@ -54,7 +54,7 @@ jobs:
 
     - name: Create Release and Upload Asset
       run: |
-        gh release create v${{ env.VERSION }} ./Release.zip --title "Release v${{ env.VERSION }} for ${{ env.TIMESTAMP }}" --notes "Commits since last release:\n\n${{ env.COMMITS }}"
+        gh release create v${{ env.VERSION }} ./Release.zip --title "Release v${{ env.VERSION }} for ${{ env.TIMESTAMP }}" --notes "Commits since last release:\n\n$(echo ${{ env.COMMITS }} | base64 --decode)"
       env:
         GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         GH_CLI_TRUSTED: "true"

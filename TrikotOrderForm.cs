@@ -29,6 +29,7 @@ namespace SVU_Bestellungen
             LoadOrdersFromSQLite();
             //LoadOrdersFromCSV();
             btnSaveSummary.Click += (s, e) => EvaluateOrderQuantities();
+            this.FormClosing += OrderManagementForm_FormClosing;
             this.AcceptButton = btnAddOrder;
             this.BackgroundImage = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("SVU_Bestellungen.RedAbstractShapesSmall.jpg"));
             dataGridViewOrders.BorderStyle = BorderStyle.None;
@@ -122,6 +123,21 @@ namespace SVU_Bestellungen
             richTextBoxLogs.SelectionColor = richTextBoxLogs.ForeColor;
 
             richTextBoxLogs.ScrollToCaret(); // Scroll to the end of the logs
+        }
+
+        private void OrderManagementForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Überprüfen Sie, ob der Benutzer das Formular wirklich schließen möchte.
+            if (MessageBox.Show("Möchten Sie die Anwendung wirklich schließen und die Datenbank sichern?", "Bestätigen", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // Rufen Sie hier Ihre Backup-Funktion auf.
+                BackupDatabase("bestellungen.db");
+            }
+            else
+            {
+                // Abbruch des Schließvorgangs.
+                e.Cancel = true;
+            }
         }
 
 

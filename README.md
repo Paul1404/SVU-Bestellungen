@@ -1,24 +1,63 @@
-# SVU-Bestellungen Dokumentation
+# 🚀 SVU-Bestellungen Dokumentation
 
-1. **Initialization** : 
-- The form is initialized with a specific appearance (`InitializeControls()`). 
-- A `DataTable` is created to represent jersey orders (`InitializeOrdersTable()`). 
-- Orders are loaded from a `bestellungen.csv` file (`LoadOrdersFromCSV()`). 
-2. **Loading CSV** : 
-- Reads orders from a CSV file and populates the `DataTable` with this data (`LoadOrdersFromCSV()`). 
-3. **DataTable** : 
-- This table (`ordersTable`) contains the following columns: `Nachname` (last name), `Vorname` (first name), `Größe` (size), `Initialen` (initials), and `Menge` (quantity). The data grid (`dataGridViewOrders`) displays this table. 
-4. **Controls Initialization** : 
-- The `InitializeControls()` function adds items to the size combo box (`comboBoxSize`), sets styles for controls like buttons, text boxes, combo boxes, and the data grid. 
-5. **Event Handlers** : 
-- `BtnAddOrder_Click`: Adds an order to the `DataTable` based on the provided user input. 
-- `BtnSaveOrders_Click`: Writes the orders from the `DataTable` to the CSV file. 
-- `btnOpenFolder_Click`: Opens the folder where the application is running in the default file explorer. 
-- `DataGridViewOrders_Paint`: Provides a custom paint job for the borders of the DataGridView. 
-- `EvaluateOrderQuantities`: Evaluates the quantities ordered per jersey size and saves this summary to a new CSV (`bestellzusammenfassung.csv`). It then displays the summary in a message box. 
-6. **Appearance & UI Interactions** :
-- The UI colors and fonts are specified. There are hover effects for buttons. 
-- When the form loads, the focus is set on the `txtNachname` (last name) text box.
-- A custom border is drawn around the data grid when it's painted. 
-7. **Miscellaneous** :
-- There's commented code to set a background image for the form, which uses an embedded resource (possibly a jpg image).
+## 🎯 Overview
+
+This project focuses on managing jersey orders using a CSV-based approach. It includes functionalities ranging from loading data from a CSV, managing data through a DataTable, to providing a user-friendly interface for operations.
+
+## 📌 Table of Contents
+
+1. [Initialization](#initialization)
+2. [Loading CSV](#loading-csv)
+3. [DataTable](#datatable)
+4. [Controls Initialization](#controls-initialization)
+5. [Event Handlers](#event-handlers)
+6. [Appearance & UI Interactions](#appearance--ui-interactions)
+7. [Miscellaneous](#miscellaneous)
+
+* * *
+
+## 🎨 Initialization
+
+* The form kicks off with a custom look achieved through `InitializeControls()`.
+* A `DataTable` is set up to mirror jersey orders using the `InitializeOrdersTable()` function.
+* The system retrieves orders from a `bestellungen.csv` file via `LoadOrdersFromCSV()`.
+
+## 📂 Loading CSV
+
+* The `LoadOrdersFromCSV()` function reads orders from a CSV file, seamlessly populating the `DataTable` with this valuable data.
+
+## 📊 DataTable
+
+* The table, named `ordersTable`, houses columns like:
+    * `Nachname` (🧑‍🦰 Last Name)
+    * `Vorname` (👩 First Name)
+    * `Größe` (📏 Size)
+    * `Initialen` (🔤 Initials)
+    * `Menge` (🛍️ Quantity)
+* The visual representation of this table is facilitated by `dataGridViewOrders`.
+
+## 🔨 Controls Initialization
+
+* With the power of `InitializeControls()`, the size combo box (`comboBoxSize`) gets populated.
+* Styling for controls such as buttons, text boxes, combo boxes, and the data grid are also defined here.
+
+## 🖱️ Event Handlers
+
+* `BtnAddOrder_Click` ➡️ An order, based on user input, gets a place in the `DataTable`.
+* `BtnSaveOrders_Click` ➡️ What's in the `DataTable` gets written to the CSV file.
+* `btnOpenFolder_Click` ➡️ Ever wanted to quickly check where the app's operating? This opens that exact folder in your default file explorer.
+* `DataGridViewOrders_Paint` ➡️ This grants the DataGridView a tailor-made paint job for its borders.
+* `EvaluateOrderQuantities` ➡️ A keen eye that assesses ordered quantities based on jersey size. This analysis finds its way to a new CSV named `bestellzusammenfassung.csv` and subsequently, a messagebox spells out the summary.
+
+## ✨ Appearance & UI Interactions
+
+* The interface dazzles with specified UI colors and fonts.
+* Buttons come alive with hover effects.
+* As the form springs into action, the spotlight falls on the `txtNachname` text box.
+* The data grid wears a custom border, thanks to the paint job.
+
+## 🔍 Miscellaneous
+
+* Hidden in comments is a gem – the code to endow the form with a background image, drawing from an embedded resource (maybe it's a captivating jpg image? 😉).
+
+* * *

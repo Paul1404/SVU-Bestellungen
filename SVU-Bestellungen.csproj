@@ -26,14 +26,16 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>https://raw.githubusercontent.com/Paul1404/SVU-Bestellungen/SQLite-Implementation-V2/published/</InstallUrl>
+    <InstallUrl>https://raw.githubusercontent.com/Paul1404/SVU-Bestellungen/MainV2/published/</InstallUrl>
     <SupportUrl>https://github.com/Paul1404/SVU-Bestellungen</SupportUrl>
     <ErrorReportUrl>https://github.com/Paul1404/SVU-Bestellungen</ErrorReportUrl>
     <TargetCulture>de</TargetCulture>
     <ProductName>SVU-Bestellungen</ProductName>
     <PublisherName>Paul Dresch</PublisherName>
     <SuiteName>SVU-Bestellungen</SuiteName>
-    <ApplicationRevision>4</ApplicationRevision>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>1.1.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

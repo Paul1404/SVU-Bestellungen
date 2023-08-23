@@ -17,6 +17,8 @@ namespace SVU_Bestellungen
     {
         private DataTable ordersTable;
         private const string ConnectionString = "data source=bestellungen.db";
+        const string SIZE_COLUMN = "Größe";
+        const string QUANTITY_COLUMN = "Menge";
 
         public TrikotOrderForm()
         {
@@ -149,34 +151,56 @@ namespace SVU_Bestellungen
         //}
 
 
-        private void BackupDatabaseInCurrentDirectoryWithTimestamp()
+        private bool BackupDatabase(string sourceFilename)
         {
-            // Get current directory
-            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string sourcePath = Path.Combine(currentDirectory, "bestellungen.db");
+            try
+            {
+                string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string sourcePath = Path.Combine(currentDirectory, sourceFilename);
 
-            // Create a backup directory if it doesn't exist
+                if (!File.Exists(sourcePath))
+                {
+                    LogMessage($"Quelldatei {sourcePath} existiert nicht!");
+                    return false;
+                }
+
+                string backupPath = PrepareBackupDirectoryAndPath(currentDirectory);
+                BackupUsingSQLite(sourcePath, backupPath);
+
+                LogMessage($"Backup gespeichert unter {backupPath}!");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"Fehler beim Prozess: {ex.Message}");
+                return false;
+            }
+        }
+
+        private string PrepareBackupDirectoryAndPath(string currentDirectory)
+        {
             string backupDirectory = Path.Combine(currentDirectory, "Backup");
             if (!Directory.Exists(backupDirectory))
             {
                 Directory.CreateDirectory(backupDirectory);
             }
 
-            // Construct the backup path using a timestamp
             string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string backupPath = Path.Combine(backupDirectory, $"database_backup_{timestamp}.db");
+            return Path.Combine(backupDirectory, $"database_backup_{timestamp}.db");
+        }
 
+        private void BackupUsingSQLite(string sourcePath, string backupPath)
+        {
             using (var sourceConnection = new SQLiteConnection($"Data Source={sourcePath}"))
             using (var destinationConnection = new SQLiteConnection($"Data Source={backupPath}"))
             {
                 sourceConnection.Open();
-                destinationConnection.Open();
+                destinationConnection.Open();  // Explicitly open destination connection
 
                 sourceConnection.BackupDatabase(destinationConnection, "main", "main", -1, null, -1);
             }
-
-            LogMessage($"Backup completed at {backupPath}!");
         }
+
 
 
         /// <summary>
@@ -476,7 +500,7 @@ namespace SVU_Bestellungen
 
         private void BtnBackupDatabase_Click(object sender, EventArgs e)
         {
-            BackupDatabaseInCurrentDirectoryWithTimestamp();
+            BackupDatabase("bestellungen.db");
         }
 
 
@@ -532,17 +556,24 @@ namespace SVU_Bestellungen
         /// </remarks>
         private void EvaluateOrderQuantities()
         {
-            // Key: Größe, Value: Gesamtmenge
+            var summary = SummarizeOrders();
+            SaveSummaryToCsv(summary);
+            LogSummary(summary);
+        }
+
+        private Dictionary<string, int> SummarizeOrders()
+        {
             Dictionary<string, int> summary = new Dictionary<string, int>();
 
             foreach (DataRow row in ordersTable.Rows)
             {
-                string size = row["Größe"].ToString();
-                int quantity = int.Parse(row["Menge"].ToString());
+                string size = row[SIZE_COLUMN]?.ToString();
+                if (size == null || !int.TryParse(row[QUANTITY_COLUMN]?.ToString(), out int quantity))
+                    continue;
 
-                if (summary.ContainsKey(size))
+                if (summary.TryGetValue(size, out int currentQuantity))
                 {
-                    summary[size] += quantity;
+                    summary[size] = currentQuantity + quantity;
                 }
                 else
                 {
@@ -550,27 +581,37 @@ namespace SVU_Bestellungen
                 }
             }
 
-            // Speichern der zusammengefassten Daten in einer CSV-Datei
-            using (StreamWriter sw = new StreamWriter("bestellzusammenfassung.csv", false, Encoding.UTF8))
+            return summary;
+        }
+
+        private void SaveSummaryToCsv(Dictionary<string, int> summary)
+        {
+            try
             {
-                // Header
-                sw.WriteLine("Größe,Menge");
-
-                foreach (var entry in summary)
+                using (StreamWriter sw = new StreamWriter("bestellzusammenfassung.csv", false, Encoding.UTF8))
                 {
-                    sw.WriteLine($"{entry.Key},{entry.Value}");
+                    sw.WriteLine($"{SIZE_COLUMN},{QUANTITY_COLUMN}");
+                    foreach (var entry in summary)
+                    {
+                        sw.WriteLine($"{entry.Key},{entry.Value}");
+                    }
                 }
+                LogMessage("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
             }
+            catch (Exception ex)
+            {
+                LogMessage($"Fehler beim Speichern der CSV: {ex.Message}");
+            }
+        }
 
-            // Anzeige der zusammengefassten Daten
+        private void LogSummary(Dictionary<string, int> summary)
+        {
             StringBuilder orderSummary = new StringBuilder("Bestellzusammenfassung:\n\n");
             foreach (var entry in summary)
             {
                 orderSummary.AppendLine($"Größe {entry.Key}: {entry.Value} Stück");
             }
-
             LogMessage(orderSummary.ToString());
-            LogMessage("Bestellzusammenfassung erfolgreich im CSV-Format gespeichert!");
         }
 
         //private void InitializeTooltips()

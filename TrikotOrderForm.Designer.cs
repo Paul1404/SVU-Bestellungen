@@ -165,6 +165,7 @@
             this.comboBoxSize.Name = "comboBoxSize";
             this.comboBoxSize.Size = new System.Drawing.Size(227, 28);
             this.comboBoxSize.TabIndex = 16;
+            this.comboBoxSize.SelectedIndexChanged += new System.EventHandler(this.comboBoxSize_SelectedIndexChanged);
             // 
             // label5
             // 

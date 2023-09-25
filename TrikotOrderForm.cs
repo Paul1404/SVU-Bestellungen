@@ -368,6 +368,8 @@ namespace SVU_Bestellungen
             comboBoxSize.Items.Add("M");
             comboBoxSize.Items.Add("L");
             comboBoxSize.Items.Add("XL");
+            comboBoxSize.Items.Add("2XL");
+            comboBoxSize.Items.Add("3XL");
 
             // Styling
             foreach (Control ctrl in this.Controls)
@@ -722,6 +724,11 @@ namespace SVU_Bestellungen
             Rectangle borderRectangle = dataGridViewOrders.Bounds;
             borderRectangle.Inflate(-1, -1);  // Optionally shrink the rectangle slightly if you want the border inside the DGV's bounds
             ControlPaint.DrawBorder(e.Graphics, borderRectangle, Color.Red, ButtonBorderStyle.Solid);
+        }
+
+        private void comboBoxSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Placeholder
         }
     }
 }

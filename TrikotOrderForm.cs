@@ -303,6 +303,38 @@ namespace SVU_Bestellungen
             dataGridViewOrders.DataSource = ordersTable;
         }
 
+        private void BtnSaveChanges_Click(object sender, EventArgs e)
+        {
+            // Alle Einträge aus der SQLite-Datenbanktabelle löschen.
+            DeleteAllFromDatabase();
+
+            // Jede Zeile aus dem DataGridView in die Datenbanktabelle einfügen.
+            foreach (DataGridViewRow row in dataGridViewOrders.Rows)
+            {
+                if (!row.IsNewRow) // Stellen Sie sicher, dass die Zeile Daten enthält und nicht die leere "neue Zeile" am Ende ist.
+                {
+                    DataRow dr = ((DataRowView)row.DataBoundItem).Row;
+                    SaveOrderToSQLite(dr);
+                }
+            }
+
+            LogMessage("Änderungen gespeichert!");
+        }
+
+        private void DeleteAllFromDatabase()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection("data source=bestellungen.db"))
+            {
+                conn.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand(conn))
+                {
+                    cmd.CommandText = @"DELETE FROM Orders";
+                    cmd.ExecuteNonQuery();
+                }
+                conn.Close();
+            }
+        }
+
 
         /// <summary>
         /// Initializes the SQLite database for storing orders. If the database file does not exist, it is created.
@@ -514,7 +546,11 @@ namespace SVU_Bestellungen
             txtInitialen.Clear();
             comboBoxSize.SelectedIndex = -1; // deselect any selected item
             numericUpDownQuantity.Value = 1;
+
+            // Set focus to txtNachname TextBox
+            txtNachname.Focus();
         }
+
 
         private void BtnBackupDatabase_Click(object sender, EventArgs e)
         {
@@ -730,5 +766,6 @@ namespace SVU_Bestellungen
         {
             //Placeholder
         }
+
     }
 }

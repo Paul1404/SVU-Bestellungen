@@ -46,6 +46,7 @@
             this.richTextBoxLogs = new System.Windows.Forms.RichTextBox();
             this.BtnSaveOrders = new System.Windows.Forms.Button();
             this.buttonBackupDatabase = new System.Windows.Forms.Button();
+            this.BtnSaveChanges = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownQuantity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrders)).BeginInit();
             this.SuspendLayout();
@@ -207,11 +208,23 @@
             this.buttonBackupDatabase.UseVisualStyleBackColor = true;
             this.buttonBackupDatabase.Click += new System.EventHandler(this.BtnBackupDatabase_Click);
             // 
+            // BtnSaveChanges
+            // 
+            this.BtnSaveChanges.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.BtnSaveChanges.Location = new System.Drawing.Point(518, 121);
+            this.BtnSaveChanges.Name = "BtnSaveChanges";
+            this.BtnSaveChanges.Size = new System.Drawing.Size(288, 55);
+            this.BtnSaveChanges.TabIndex = 21;
+            this.BtnSaveChanges.Text = "Änderungen Speichern";
+            this.BtnSaveChanges.UseVisualStyleBackColor = true;
+            this.BtnSaveChanges.Click += new System.EventHandler(this.BtnSaveChanges_Click);
+            // 
             // TrikotOrderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2283, 1336);
+            this.Controls.Add(this.BtnSaveChanges);
             this.Controls.Add(this.buttonBackupDatabase);
             this.Controls.Add(this.BtnSaveOrders);
             this.Controls.Add(this.richTextBoxLogs);
@@ -258,6 +271,7 @@
         private System.Windows.Forms.RichTextBox richTextBoxLogs;
         private System.Windows.Forms.Button BtnSaveOrders;
         private System.Windows.Forms.Button buttonBackupDatabase;
+        private System.Windows.Forms.Button BtnSaveChanges;
     }
 }
 
